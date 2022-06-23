@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+  <!-- Optional theme -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+  <!-- Latest compiled and minified JavaScript -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+  <link rel="stylesheet" href="payment.css">
+
+  <!-- Load the client component. -->
+  <script src='https://js.braintreegateway.com/web/3.85.3/js/client.min.js'></script>
+
+  <!-- Load the 3D Secure component. -->
+  <script src='https://js.braintreegateway.com/web/3.85.3/js/three-d-secure.min.js'></script>
+
+  <!-- Load the Hosted Fields component. -->
+  <script src='https://js.braintreegateway.com/web/3.85.3/js/hosted-fields.min.js'></script>
+
+
+</head>
+
+<body>
+
+<h1>3D Secure with Hosted Fields</h1>
+<hr>
+
+<form action="javascript:void(0)" class="container">
+  <div class="row">
+    <div class="col-xs-12">
+      <p class="lead">This is a functional example of performing 3D Secure verification on a credit card
+        tokenized with Hosted Fields. For 3DS 2.0, it's highly recomended to supply additional information
+        about the customer to achieve a frictionless flow (no challenge presented).</p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-12">
+      <p>For this demo, you may populate the fields with fake customer information.</p>
+      <button class="btn btn-warning" id="autofill">Autofill Customer Information</button>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="form-group">
+        <label for="email">Email address</label>
+        <input type="email" class="form-control" id="email" placeholder="you@example.com">
+        <span id="help-email" class="help-block"></span>
+      </div>
+      <div class="form-group">
+        <label for="billing-phone">Billing phone number</label>
+        <input type="billing-phone" class="form-control" id="billing-phone" placeholder="123-456-7890">
+        <span id="help-billing-phone" class="help-block"></span>
+      </div>
+      <div class="form-group">
+        <label for="billing-given-name">Billing given name</label>
+        <input type="billing-given-name" class="form-control" id="billing-given-name" placeholder="First">
+        <span id="help-billing-given-name" class="help-block"></span>
+      </div>
+      <div class="form-group">
+        <label for="billing-surname">Billing surname</label>
+        <input type="billing-surname" class="form-control" id="billing-surname" placeholder="Last">
+        <span id="help-billing-surname" class="help-block"></span>
+      </div>
+      <div class="form-group">
+        <label for="billing-street-address">Billing street address</label>
+        <input type="billing-street-address" class="form-control" id="billing-street-address"
+               placeholder="123 Street">
+        <span id="help-billing-street-address" class="help-block"></span>
+      </div>
+      <div class="form-group">
+        <label for="billing-extended-address">Billing extended address</label>
+        <input type="billing-extended-address" class="form-control" id="billing-extended-address"
+               placeholder="Unit 1">
+        <span id="help-billing-extended-address" class="help-block"></span>
+      </div>
+      <div class="form-group">
+        <label for="billing-locality">Billing locality</label>
+        <input type="billing-locality" class="form-control" id="billing-locality" placeholder="City">
+        <span id="help-billing-locality" class="help-block"></span>
+      </div>
+      <div class="form-group">
+        <label for="billing-region">Billing region</label>
+        <input type="billing-region" class="form-control" id="billing-region" placeholder="State">
+        <span id="help-billing-region" class="help-block"></span>
+      </div>
+      <div class="form-group">
+        <label for="billing-postal-code">Billing postal code</label>
+        <input type="billing-postal-code" class="form-control" id="billing-postal-code" placeholder="12345">
+        <span id="help-billing-postal-code" class="help-block"></span>
+      </div>
+      <div class="form-group">
+        <label for="billing-country-code">Billing country code (Alpha 2)</label>
+        <input type="billing-country-code" class="form-control" id="billing-country-code" placeholder="XX">
+        <span id="help-billing-country-code" class="help-block"></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-xs-12">
+      <table class="table">
+        <tr>
+          <th>Field</th>
+          <th>Value</th>
+        </tr>
+        <tr>
+          <td>Number (successful with no challenge)</td>
+          <td>4000000000001000</td>
+        </tr>
+        <tr>
+          <td>Number (successful with challenge)</td>
+          <td>4000000000001091</td>
+        </tr>
+        <tr>
+          <td>Number (unsuccessful with challenge)</td>
+          <td>4000000000001109</td>
+        </tr>
+        <tr>
+          <td>Expiration Date (for sandbox testing, year must be exactly 3 years in the future)</td>
+          <td>12/22</td>
+        </tr>
+        <tr>
+          <td>CVV</td>
+          <td>123</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="col-xs-12 nonce-group hidden">
+    <p class="lead"> Payment method nonce received: </p>
+    <div class="input-group">
+      <span class="input-group-addon lead"></span>
+      <input readonly name="nonce" class="form-control">
+    </div>
+    <br>
+    <p class="lead"> Reload the codepen to try another card. </p>
+    <br>
+  </div>
+
+  <div id="hosted-fields">
+    <div class="row">
+      <div class="col-xs-12">
+        <div class="input-group">
+          <span class="input-group-addon"><span class="glyphicon glyphicon-credit-card"></span></span>
+          <div id="hf-number" class="form-control"></div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-xs-6">
+        <div class="input-group">
+          <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+          <div id="hf-date" class="form-control"></div>
+        </div>
+      </div>
+      <div class="col-xs-6">
+        <div class="input-group">
+          <span class="input-group-addon"><span class="glyphicon glyphicon-lock"></span></span>
+          <div id="hf-cvv" class="form-control"></div>
+          <span class="input-group-addon">CVV</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-xs-6">
+      <div class="input-group nonce-group hidden">
+        <span class="input-group-addon">nonce</span>
+        <input readonly name="nonce" class="form-control">
+      </div>
+
+      <br />
+
+      <div class="input-group pay-group">
+        <input disabled id="pay-btn" class="btn btn-success" type="submit" value="Loading...">
+      </div>
+    </div>
+  </div>
+</form>
+</body>
+
+<script src="payment.js" crossorigin="anonymous"></script>
+
+</html>
